@@ -36,7 +36,7 @@ pipeline {
             archiveArtifacts artifacts: '**/target/**/*.war', fingerprint: true
             archiveArtifacts artifacts: '**/target/surefire-reports/*.xml'
             archiveArtifacts artifacts: '**/target/site/apidocs/*'
-
+            archiveArtifacts artifacts: '**/target/site/pmd.html'
         }
     }
 }
