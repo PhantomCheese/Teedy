@@ -3,18 +3,16 @@ pipeline {
     stages {
         stage('Build') { 
             steps {
-                sh 'mvn -B -DskipTests clean package' 
+                sh 'mvn -B -DskipTests clean package'
+                sh 'mvn surefire-report:report' 
+                sh 'mvn javadoc:javadoc --fail-never'
             }
+        }
 
-            post {
-                success {
-                    // Archive Surefire reports
-                    archiveArtifacts '**/target/surefire-reports/*.xml'
-                    // Generate Javadoc
-                    sh 'mvn javadoc:jar'
-                    // Archive Javadoc as an artifact
-                    archiveArtifacts '**/target/site/apidocs/*'
-                }
+        stage('Doc') {
+            steps {
+                sh 'mvn javadoc:javadoc --fail-never'
+                sh 'mvn javadoc:jar'
             }
         }
 
@@ -26,14 +24,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                // Run tests
-                sh 'mvn test'
-            }
-            post {
-                always {
-                    // Archive Surefire reports
-                    archiveArtifacts '**/target/surefire-reports/*.xml'
-                }
+                sh 'mvn test --fail-never'
             }
         }
     }
@@ -43,6 +34,9 @@ pipeline {
             archiveArtifacts artifacts: '**/target/site/**', fingerprint: true
             archiveArtifacts artifacts: '**/target/**/*.jar', fingerprint: true
             archiveArtifacts artifacts: '**/target/**/*.war', fingerprint: true
+            archiveArtifacts artifacts: '**/target/surefire-reports/*.xml'
+            archiveArtifacts artifacts: '**/target/site/apidocs/*'
+
         }
     }
 }
