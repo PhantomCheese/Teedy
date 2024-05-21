@@ -11,7 +11,7 @@ pipeline {
 
         stage('K8s') {
             steps {
-                sh 'kubectl set image deployments/hello-node container-name=hello-node-5dd5dcf7b4-884pn'
+                sh 'kubectl set image deployments/hello-node docs=sismics/docs:latest'
             }
         }
         
