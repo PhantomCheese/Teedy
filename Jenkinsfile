@@ -2,37 +2,19 @@ pipeline {
     agent any
     stages {
 
-        stage('Package') {
+        
+        stage('Build') { 
             steps {
-                sh 'mvn -B -DskipTests clean package'
+                sh 'mvn -B -DskipTests clean package' 
             }
-            
         }
 
-        stage('Building image') {
-            steps{
-                sh 'docker build -t teedy2024_manual .'
+        stage('K8s') {
+            steps {
+                sh 'kubectl set image deployments/hello-node container-name=hello-node-5dd5dcf7b4-884pn'
             }
-            
         }
         
-        stage('Upload image') {
-            steps{
-                sh 'sudo docker tag teedy2024_manual phantomcheese976/myteedy:v1.0'
-                sh 'sudo docker push phantomcheese976/myteedy:v1.0'
-            }
-            
-        }
-
-        stage('Run containers') {
-            steps{
-                sh 'docker run -d -p 8084:8080 --name teedy_manual01 teedy2024_manual'
-                sh 'docker run -d -p 8082:8080 --name teedy_manual02 teedy2024_manual'
-                sh 'docker run -d -p 8083:8080 --name teedy_manual03 teedy2024_manual'
-            }
-            
-        }
-
         // stage('Build') { 
         //     steps {
         //         sh 'mvn -B -DskipTests clean package'
